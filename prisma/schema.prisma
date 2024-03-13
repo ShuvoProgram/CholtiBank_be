@@ -1,0 +1,259 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  user
+  admin
+  loan_officer
+  customer_service_representative
+}
+
+enum AccountStatus {
+  active
+  inActive
+}
+
+model User {
+  id                String             @id @default(uuid())
+  firstName         String
+  lastName          String
+  nationalId        String             @unique
+  phoneNumber       String             @unique
+  password          String
+  pin               String
+  role              UserRole
+  isEmployee        Boolean            @default(false)
+  lastLogin         DateTime?          @default(now())
+  passwordChangedAt DateTime?
+  pinChangeAt       DateTime?
+  accountStatus     AccountStatus      @default(active)
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  transaction       Transaction[]
+  personalInfo      PersonalInfo?
+  userFinancialInfo UserFinancialInfo?
+  deviceInfo        DeviceInfo?
+  Loan              Loan[]
+  LoanOfficer       LoanOfficer?
+}
+
+model PersonalInfo {
+  id               String    @id @default(uuid())
+  dateOfBirth      DateTime?
+  profilePicture   String?
+  gender           String?
+  nationality      String?
+  otherPhoneNumber String?
+  passportId       String?
+  email            String?
+  fatherName       String?
+  motherName       String?
+  currentAddress   String?
+  permanentAddress String?
+  maritalStatus    String?
+  occupation       String?
+  user             User      @relation(fields: [userId], references: [id])
+  userId           String    @unique
+}
+
+model UserFinancialInfo {
+  id                  String    @id @default(uuid())
+  accountNumber       String    @unique
+  accountBalance      Float     @default(0.0)
+  totalDeposit        Float?    @default(0.0)
+  totalWithdraw       Float?    @default(0.0)
+  totalTransfer       Float?    @default(0.0)
+  totalRecharge       Float?    @default(0.0)
+  accountType         String    @default("current")
+  currency            String    @default("BDT")
+  interestRate        Float?
+  creditLimit         Float?
+  overdraftLimit      Float?
+  withdrawalLimit     Float?
+  investmentPortfolio String?
+  creditScore         Int?
+  accountOpeningDate  DateTime?
+  lastUpdatedDate     DateTime?
+  updatedAt           DateTime  @updatedAt
+  user                User      @relation(fields: [userId], references: [id])
+  userId              String    @unique
+}
+
+model DeviceInfo {
+  id              String   @id @default(uuid())
+  devicesId       String?
+  devicesModel    String?
+  devicesType     String?
+  devicesVendor   String?
+  browserName     String?
+  browserVersion  String?
+  engineName      String?
+  engineVersion   String?
+  osName          String?
+  osVersion       String?
+  cpuArchitecture String?
+  agentClient     String?
+  updatedAt       DateTime @updatedAt
+  user            User     @relation(fields: [userId], references: [id])
+  userId          String   @unique
+}
+
+enum TransactionTypeEnum {
+  Deposit
+  Withdrawal
+  Transfer
+  Mobile_Recharge
+}
+
+enum DepositSourceEnum {
+  bank_transfer
+  credit_card
+  atm
+  agent
+}
+
+enum WithdrawSourceEnum {
+  agent
+  atm
+}
+
+model Deposit {
+  id               String            @id @default(uuid())
+  transactionId    String            @unique
+  amount           Float
+  depositSource    DepositSourceEnum
+  bankName         String?
+  bankAccountNo    String?
+  creditCardName   String?
+  creditCardNumber String?
+  atmId            String?
+  agentId          String?
+  createdAt        DateTime          @default(now())
+  Transaction      Transaction?
+}
+
+model Withdrawal {
+  id             String             @id @default(uuid())
+  transactionId  String             @unique
+  amount         Float
+  withdrawSource WithdrawSourceEnum
+  atmId          String?
+  agentId        String?
+  createdAt      DateTime           @default(now())
+  Transaction    Transaction?
+}
+
+enum TransferSourceEnum {
+  Cholti_to_Cholti
+  NPSB
+  EFT
+  RTGS
+  Cash_by_code
+  BKash
+  Nagad
+  Prepaid_Card
+  Binimoy
+}
+
+model Transfer {
+  id               String             @id @default(uuid())
+  transactionId    String             @unique
+  amount           Float
+  transferSource   TransferSourceEnum
+  bankName         String?
+  bankAccountNo    String?
+  receiverName     String?
+  receiverId       String?
+  receiverNID      String?
+  phoneNumber      String?
+  bankBranch       String?
+  reference        String?
+  cashByCodePIN    String?
+  creditCardName   String?
+  creditCardNumber String?
+  atmId            String?
+  agentId          String?
+  createdAt        DateTime           @default(now())
+  Transaction      Transaction?
+}
+
+enum SimTypeEnum {
+  Prepaid
+  Postpaid
+}
+
+enum MobileOperatorEnum {
+  Grameenphone
+  Robi
+  Banglalink
+  Airtel
+  Teletalk
+}
+
+model MobileRecharge {
+  id              String             @id @default(uuid())
+  transactionId   String             @unique
+  phoneNumber     String
+  amount          Float
+  mobileOperators MobileOperatorEnum
+  simType         SimTypeEnum
+  createdAt       DateTime           @default(now())
+  Transaction     Transaction?
+}
+
+model Transaction {
+  id               String              @id @default(uuid())
+  transactionId    String              @unique
+  transactionType  TransactionTypeEnum
+  reference        String?
+  createdAt        DateTime            @default(now())
+  user             User                @relation(fields: [userId], references: [id])
+  userId           String
+  deposit          Deposit?            @relation(fields: [depositId], references: [id])
+  depositId        String?             @unique
+  withdrawal       Withdrawal?         @relation(fields: [withdrawalId], references: [id])
+  withdrawalId     String?             @unique
+  transfer         Transfer?           @relation(fields: [transferId], references: [id])
+  transferId       String?             @unique
+  mobileRecharge   MobileRecharge?     @relation(fields: [mobileRechargeId], references: [id])
+  mobileRechargeId String?             @unique
+}
+
+model Loan {
+  id            String      @id @default(uuid())
+  borrowerId    String
+  amount        Float
+  interestRate  Float
+  termMonths    Int
+  startDate     DateTime
+  status        LoanStatus
+  loanOfficer   LoanOfficer @relation(fields: [loanOfficerId], references: [id])
+  loanOfficerId String
+  borrower      User        @relation(fields: [borrowerId], references: [id])
+}
+
+enum LoanStatus {
+  PENDING
+  APPROVED
+  ACTIVE
+  CLOSED
+}
+
+model LoanOfficer {
+  id          String   @id @default(uuid())
+  employeeId  String   @unique
+  department  String
+  hireDate    DateTime
+  activeLoans Loan[]
+  user        User     @relation(fields: [userId], references: [id])
+  userId      String   @unique
+}
