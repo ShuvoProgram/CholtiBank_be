@@ -21,7 +21,7 @@ const server = http.createServer(app);
 // Configure CORS
 const allowedOrigins = [
   'http://localhost:3000',
-  'https:example.vercel.app',
+  'https://cholti-bank.vercel.app',
 ];
 
 const io = new Server(server, {
