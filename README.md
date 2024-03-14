@@ -38,6 +38,115 @@ CholtiBank is the first digital bank in Bangladesh, revolutionizing the banking 
 | <img src="https://img.shields.io/badge/-jwt_decode-green?logo=jwt&style=for-the-badge" width="100" height="30">              | [jwt-decode](https://www.npmjs.com/package/jwt-decode)                   | A library to decode JWTs (JSON Web Tokens)                                                                       |
 | <img src="https://img.shields.io/badge/-next_themes-black?logo=next.js&style=for-the-badge" width="100" height="30">          | [next-themes](https://github.com/pacocoursey/next-themes)               | A library for managing themes in Next.js applications                                                            |
 
+# Role_based
+
+| Role                | Credential
+|-----------------------------------------|------------------------------------------------------|
+| Admin               | Email: admin@gmail.com password: ********
+| User                | Email: user@gmail.com password: 123456
+
+# Entity-Relationship-Diagram(ERD)
+
+```
+  +-------------------+          +-------------------+
+  |       User        |    1     |   PersonalInfo    |
+  +-------------------+<-------->+-------------------+
+  | id                |          | id                |
+  | firstName         |          | dateOfBirth       |
+  | lastName          |          | profilePicture    |
+  | nationalId        |          | gender            |
+  | phoneNumber       |          | nationality       |
+  | password          |          | otherPhoneNumber  |
+  | pin               |          | passportId        |
+  | role              |          | email             |
+  | isEmployee        |          | fatherName        |
+  | lastLogin         |          | motherName        |
+  | passwordChangedAt |          | currentAddress    |
+  | pinChangeAt       |          | permanentAddress  |
+  | accountStatus     |          | maritalStatus     |
+  | createdAt         |          | occupation        |
+  | updatedAt         |          | userId            |
+  +-------------------+          +-------------------+
+            |                                |
+            |                                |
+            |                                |
+            |                                |
+            |                                |
+            |                                |
+            |                                |
+            |                                |
+            |                                |
+            |                                |
+            v                                v
+  +-------------------+          +-------------------+
+  | UserFinancialInfo |          |    DeviceInfo     |
+  +-------------------+          +-------------------+
+  | id                |          | id                |
+  | accountNumber     |          | devicesId         |
+  | accountBalance    |          | devicesModel      |
+  | totalDeposit      |          | devicesType       |
+  | totalWithdraw     |          | devicesVendor     |
+  | totalTransfer     |          | browserName       |
+  | totalRecharge     |          | browserVersion    |
+  | accountType       |          | engineName        |
+  | currency          |          | engineVersion     |
+  | interestRate      |          | osName            |
+  | creditLimit       |          | osVersion         |
+  | overdraftLimit    |          | cpuArchitecture   |
+  | withdrawalLimit   |          | agentClient       |
+  | investmentPortfolio |         | updatedAt         |
+  | creditScore       |          | userId            |
+  | accountOpeningDate |         +-------------------+
+  | lastUpdatedDate   |
+  | updatedAt         |
+  +-------------------+
+            |
+            |
+            |
+            |
+            |
+            |
+            |
+            |
+            |
+            v
+  +-------------------+
+  |    Transaction    |
+  +-------------------+
+  | id                |
+  | transactionId     |
+  | transactionType   |
+  | reference         |
+  | createdAt         |
+  | userId            |
+  | depositId         |
+  | withdrawalId      |
+  | transferId        |
+  | mobileRechargeId  |
+  +-------------------+
+            |
+            |
+            |
+            |
+            |
+            |
+            |
+            |
+            |
+            v
+  +-------------------+
+  |     Transaction   |
+  |       Types       |
+  +-------------------+
+  |   Deposit         |
+  |   Withdrawal      |
+  |   Transfer        |
+  |   MobileRecharge |
+  +-------------------+
+
+```
+
+
 ## Features
 
 - 🔒 Highly Secure
