@@ -43,6 +43,7 @@ CholtiBank is the first digital bank in Bangladesh, revolutionizing the banking 
 | Role                | Credential
 |-----------------------------------------|------------------------------------------------------|
 | Admin               | phoneNumber: 01790456214 password: ********
+| User               | phoneNumber: 017904562140 password: 123456
 
 
 # Entity-Relationship-Diagram(ERD)
